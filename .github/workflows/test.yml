@@ -3,7 +3,12 @@ on: push
 jobs:
   test:
     runs-on: ubuntu-16.04
+    strategy:
+      matrix:
+        artifacts: ["1", "2", "3"]
     steps:
+      - name: Check out code
+        uses: actions/checkout@v2
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
@@ -28,4 +33,35 @@ jobs:
         env:
           MATRIX_CONTEXT: ${{ toJson(matrix) }}
         run: echo "$MATRIX_CONTEXT"
+
+      - name: Gather release details
+        if: startsWith( github.ref, 'refs/tags/v' )
+        id: release_details
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo ::set-output name=version::${VERSION}
+
+      - name: Create release
+        if: startsWith( github.ref, 'refs/tags/v' )
+        id: release_create
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.release_details.version }}
+          release_name: Release ${{ steps.release_details.version }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        if: startsWith( github.ref, 'refs/tags/v' )
+        id: release_assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.release_create.outputs.upload_url }}
+          asset_path: ./artifacts/${{ matrix.artifacts }}
+          asset_name: ${{ matrix.artifacts }}
+          asset_content_type: text/plain
 
