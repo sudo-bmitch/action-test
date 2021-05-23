@@ -61,9 +61,9 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            1.txt
-            2.txt
-            3.txt
+            artifacts/1.txt
+            artifacts/2.txt
+            artifacts/3.txt
 
       # - name: Create release
       #   if: steps.release_details.outputs.valid == 'true'
