@@ -1,5 +1,3 @@
-Release v0.0.7
+Release v0.0.8
 
-- Testing automatic handling of release notes, even if they have
-  linefeeds and % characters
-
+- Switching to softprops/action-gh-release@v1 for releases
