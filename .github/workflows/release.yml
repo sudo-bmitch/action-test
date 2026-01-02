@@ -60,8 +60,8 @@ jobs:
         else
           TAG_MINOR="${TAG%.*}"
           TAG_MAJOR="${TAG_MINOR%.*}"
-          git tag -afm "{$TAG_MINOR}" "{$TAG_MINOR}"
-          git tag -afm "{$TAG_MAJOR}" "{$TAG_MAJOR}"
+          git tag -afm "${TAG_MINOR}" "${TAG_MINOR}"
+          git tag -afm "${TAG_MAJOR}" "${TAG_MAJOR}"
           PRERELEASE=false
         fi
         # push all tags

@@ -1,3 +1,3 @@
-# Release v0.0.10
+# Release v0.0.11
 
-Testing release workflow is successful
+Fix major and minor tags
