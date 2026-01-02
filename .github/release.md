@@ -1,3 +1,3 @@
-# Release v0.0.10-rc1
+# Release v0.0.10
 
-Testing release workflow
+Testing release workflow is successful
