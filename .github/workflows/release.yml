@@ -1,0 +1,75 @@
+name: Release
+
+# Preferably this would run on merges into main, and look at individual commits.
+# That would avoid any race conditions and out of order merges to main that would tag something other than the agreed release.md contains.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag name"
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+      with:
+        fetch-tags: true
+        persist-credentials: true
+
+    - name: Tag release
+      id: tag_release
+      env:
+        TAG: ${{ inputs.tag }}
+      run: |
+        if [[ ! $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-.*|$) ]]; then
+          echo "Unexpected tag syntax: \"${TAG}\"" >&2
+          exit 1
+        fi
+        # verify tag is specified in the top release notes entry
+        if ! [ "$(grep "# Release" .github/release.md)" = "# Release ${TAG}" ]; then
+          echo "Tag \"${TAG}\" does not match release file: $(grep "# Release" .github/release.md)" >&2
+          exit 1
+        fi
+        # verify git tag is not already used
+        if git show "refs/tags/${TAG}" >/dev/null 2>&1; then
+          echo "Tag \"${TAG}\" already exists:" >&2
+          git show "refs/tags/${TAG}" >&2
+          exit 1
+        fi
+        # run git tag for requested tag
+        git tag -am "${TAG}" "${TAG}"
+        # for non-rc releases, compute and force create major and minor tags
+        if [[ $TAG =~ [0-9\.]+-.+$ ]]; then
+          PRERELEASE=true
+        else
+          TAG_MINOR="${TAG%.*}"
+          TAG_MAJOR="${TAG_MINOR%.*}"
+          git tag -afm "{$TAG_MINOR}" "{$TAG_MINOR}"
+          git tag -afm "{$TAG_MAJOR}" "{$TAG_MAJOR}"
+          PRERELEASE=false
+        fi
+        # push all tags
+        git push origin --tags
+        # track pre-release status to an output variable
+        echo "pre_release=${PRERELEASE}" >>$GITHUB_OUTPUT
+
+    - name: Create release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ inputs.tag }}
+        body_path: .github/release.md
+        draft: false
+        prerelease: ${{ steps.tag_release.outputs.pre_release }}
+
+
