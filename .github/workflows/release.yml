@@ -62,7 +62,7 @@ jobs:
           PRERELEASE=false
         fi
         # push all tags
-        git push origin --tags
+        git push origin --tags --force-with-lease
         # track pre-release status to an output variable
         echo "pre_release=${PRERELEASE}" >>$GITHUB_OUTPUT
         echo "release_file=${TMP_FILE}" >>$GITHUB_OUTPUT

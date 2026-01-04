@@ -1,5 +1,9 @@
 # Release Notes
 
+## Release v0.0.13
+
+- Force push of v0 and v0.0 tags
+
 ## Release v0.0.12
 
 - Run release workflow automatically
