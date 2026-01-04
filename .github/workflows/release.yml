@@ -66,11 +66,12 @@ jobs:
         # track pre-release status to an output variable
         echo "pre_release=${PRERELEASE}" >>$GITHUB_OUTPUT
         echo "release_file=${TMP_FILE}" >>$GITHUB_OUTPUT
+        echo "tag=${TAG}" >>$GITHUB_OUTPUT
 
     - name: Create release
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: ${{ inputs.tag }}
+        tag_name: ${{ steps.tag_release.outputs.tag }}
         body_path: ${{ steps.tag_release.outputs.release_file }}
         draft: false
         prerelease: ${{ steps.tag_release.outputs.pre_release }}
