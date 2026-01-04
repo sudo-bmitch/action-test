@@ -1,10 +1,21 @@
 # Release Notes
 
-## Release v0.0.13
+## Release v0.0.14
 
-- Force push of v0 and v0.0 tags
+(rerelease to v0.0.13)
+
 - Run release workflow automatically
 - Parse release notes file instead of splitting out a single release to a separate file
+- Force push of v0 and v0.0 tags
+- Pass the tag to the release job
+
+## Release v0.0.13
+
+(rerelease to v0.0.12)
+
+- Run release workflow automatically
+- Parse release notes file instead of splitting out a single release to a separate file
+- Force push of v0 and v0.0 tags
 
 ## Release v0.0.12
 
